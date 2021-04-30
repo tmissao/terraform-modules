@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: vol-grafana
+spec:
+  storageClassName: gp2
+  accessModes:
+  - ReadWriteOnce
+  awsElasticBlockStore:
+    fsType: ext4
+    volumeID: ${GRAFANA_VOLUME_ID}
+  capacity:
+    storage: ${GRAFANA_STORAGE_SIZE}Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: vol-prometheus
+spec:
+  storageClassName: gp2
+  accessModes:
+  - ReadWriteOnce
+  awsElasticBlockStore:
+    fsType: ext4
+    volumeID: ${PROMETHEUS_VOLUME_ID}
+  capacity:
+    storage: ${PROMETHEUS_STORAGE_SIZE}Gi

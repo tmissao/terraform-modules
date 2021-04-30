@@ -1,0 +1,97 @@
+# This is used to generate istio.yaml for minimal, demo mode.
+# It is shipped with the release, used for bookinfo or quick installation of istio.
+# Includes components used in the demo, defaults to alpha3 rules.
+global:
+  controlPlaneSecurityEnabled: false
+  # outboundTrafficPolicy:
+  #   mode: REGISTRY_ONLY
+
+  proxy:
+    accessLogFile: "/dev/stdout"
+
+  disablePolicyChecks: false
+
+  mtls:
+    # Default setting for service-to-service mtls. Can be set explicitly using
+    # destination rules or service annotations.
+    enabled: false
+
+sidecarInjectorWebhook:
+  enabled: true
+  # If true, webhook or istioctl injector will rewrite PodSpec for liveness
+  # health check to redirect request to sidecar. This makes liveness check work
+  # even when mTLS is enabled.
+  rewriteAppHTTPProbe: false
+
+pilot:
+  autoscaleEnabled: true
+  traceSampling: 0.5
+  autoscaleMin: 2
+  autoscaleMax: 10
+  podAntiAffinityTermLabelSelector:
+    - key: app
+      operator: In
+      values: pilot
+      topologyKey: "kubernetes.io/hostname"
+
+mixer:
+  policy:
+    enabled: true
+    autoscaleEnabled: true
+    autoscaleMin: 2
+    autoscaleMax: 10
+  telemetry:
+    enabled: true
+    autoscaleEnabled: true
+    autoscaleMin: 1
+    autoscaleMax: 10
+  podAntiAffinityTermLabelSelector:
+  - key: app
+    operator: In
+    values: telemetry
+    topologyKey: "kubernetes.io/hostname"
+
+  adapters:
+    stdio:
+      enabled: true
+
+grafana:
+  enabled: true
+  persist: false
+
+tracing:
+  enabled: true
+
+kiali:
+  enabled: true
+  createDemoSecret: true
+
+prometheus:
+  retention: 3d
+
+gateways:
+  istio-ingressgateway:
+    # Creates Internal Load Balancer
+    serviceAnnotations:
+      service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: "${TAGS}"
+      # service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+      # service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+    autoscaleEnabled: true
+    autoscaleMin: 2
+    autoscaleMax: 10
+    podAntiAffinityTermLabelSelector:
+    - key: app
+      operator: In
+      values: istio-ingressgateway
+      topologyKey: "kubernetes.io/hostname"
+
+  istio-egressgateway:
+    enabled: true
+    autoscaleEnabled: true
+    autoscaleMin: 2
+    autoscaleMax: 10
+    podAntiAffinityTermLabelSelector:
+    - key: app
+      operator: In
+      values: istio-egressgateway
+      topologyKey: "kubernetes.io/hostname"
