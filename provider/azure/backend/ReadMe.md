@@ -15,8 +15,6 @@ module "backend" {
 }
 ```
 
-### See the [demo](./src/example) for full usage.
-
 ## Arguments
 ---
 - `keyvault` - (Required) Keyvault's information used to encrypt the storage account.
